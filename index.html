@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GiraDonors – La ruota della fortuna di Metadonors</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy2:  #1E2E40;
+    --teal:   #3D9E9E;
+    --gold:   #F5B830;
+    --orange: #E8633A;
+    --purple: #7B5EA7;
+    --green:  #4CAF82;
+    --white:  #FFFFFF;
+    --gray:   rgba(255,255,255,0.5);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--navy2);
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 800px 500px at 85% 5%,  rgba(61,158,158,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 600px 600px at 5%  90%, rgba(245,184,48,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 500px 400px at 50% 50%, rgba(30,46,64,0.95)  0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(circle 1.5px at 8%  12%, rgba(61,158,158,0.5)  0%, transparent 100%),
+      radial-gradient(circle 1px  at 20% 55%,  rgba(245,184,48,0.3)  0%, transparent 100%),
+      radial-gradient(circle 1px  at 33% 82%,  rgba(61,158,158,0.35) 0%, transparent 100%),
+      radial-gradient(circle 1px  at 48% 20%,  rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(circle 1.5px at 65% 68%, rgba(245,184,48,0.25) 0%, transparent 100%),
+      radial-gradient(circle 1px  at 78% 14%,  rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(circle 1px  at 88% 48%,  rgba(61,158,158,0.3)  0%, transparent 100%),
+      radial-gradient(circle 1.5px at 94% 85%, rgba(61,158,158,0.4)  0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  #app {
+    position: relative; z-index: 1;
+    width: 100%; min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center;
+    padding-bottom: 32px;
+  }
+
+  /* ── HEADER ── */
+  #logo-bar {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding-top: 20px; margin-bottom: 4px;
+  }
+  .logo-text {
+    font-size: 20px; font-weight: 800;
+    color: var(--white); letter-spacing: -0.04em;
+  }
+  .logo-claim {
+    font-size: 9px; font-weight: 500;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ── TITOLO EVENTO ── */
+  #event-title {
+    text-align: center; margin-bottom: 24px;
+  }
+  #event-title h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800; letter-spacing: -0.04em; line-height: 1;
+    color: var(--white);
+  }
+  #event-title h1 .donors { color: var(--gold); }
+  #event-title p {
+    font-size: clamp(10px, 1.1vw, 12px);
+    color: rgba(255,255,255,0.3);
+    font-weight: 500; letter-spacing: 0.07em;
+    text-transform: uppercase; margin-top: 4px;
+  }
+
+  /* ══════════════════════════════
+     SCHERMATA FORM
+  ══════════════════════════════ */
+  #form-screen {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 16px;
+    width: 100%; max-width: 420px;
+    padding: 0 24px;
+    animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  .form-intro { text-align: center; }
+  .form-intro h2 {
+    font-size: clamp(17px, 2.5vw, 22px);
+    font-weight: 700; color: var(--white);
+    letter-spacing: -0.03em; line-height: 1.25;
+  }
+  .form-intro p {
+    font-size: 13px; color: var(--gray);
+    margin-top: 6px; line-height: 1.5;
+  }
+
+  .field-group { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+  .field-row   { display: flex; gap: 10px; }
+  .field-wrap  { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+
+  .field-wrap label {
+    font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .field-wrap label .req { color: var(--gold); margin-left: 2px; }
+
+  .field-wrap input {
+    width: 100%; padding: 13px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(61,158,158,0.25);
+    background: rgba(61,158,158,0.07);
+    color: var(--white);
+    font-size: 15px; font-family: inherit; font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    -webkit-appearance: none;
+  }
+  .field-wrap input::placeholder { color: rgba(255,255,255,0.2); }
+  .field-wrap input:focus {
+    border-color: rgba(61,158,158,0.6);
+    background: rgba(61,158,158,0.12);
+  }
+  .field-wrap input.error {
+    border-color: rgba(232,99,58,0.7);
+    background: rgba(232,99,58,0.08);
+  }
+
+  #form-error {
+    font-size: 13px; color: var(--orange);
+    font-weight: 500; text-align: center;
+    display: none; width: 100%;
+  }
+
+  #form-submit {
+    width: 100%; padding: 15px;
+    border-radius: 100px; border: none;
+    background: var(--gold); color: var(--navy2);
+    font-size: 16px; font-weight: 800;
+    font-family: inherit; cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  #form-submit:hover  { opacity: 0.88; }
+  #form-submit:active { transform: scale(0.98); }
+  #form-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .privacy-note {
+    font-size: 11px; color: rgba(255,255,255,0.18);
+    text-align: center; line-height: 1.5; padding: 0 8px;
+  }
+
+  /* ══════════════════════════════
+     SCHERMATA COUNTDOWN
+  ══════════════════════════════ */
+  #countdown-screen {
+    display: none; flex-direction: column;
+    align-items: center; text-align: center;
+    gap: 20px;
+    animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  #countdown-screen h2 {
+    font-size: clamp(20px, 3vw, 34px);
+    font-weight: 700; color: var(--white);
+    line-height: 1.2; letter-spacing: -0.03em;
+  }
+  .name-highlight { color: var(--gold); font-weight: 800; }
+  #countdown-screen p.sub { font-size: clamp(13px, 1.5vw, 16px); color: var(--gray); }
+
+  #cd-ring-wrap { position: relative; width: 116px; height: 116px; }
+  #cd-ring-wrap svg { transform: rotate(-90deg); }
+  circle.track { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 5; }
+  circle.prog  {
+    fill: none; stroke: var(--teal); stroke-width: 5;
+    stroke-linecap: round;
+    stroke-dasharray: 345.4; stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.95s linear;
+  }
+  #cd-num {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 46px; font-weight: 800;
+    color: var(--teal); letter-spacing: -0.04em;
+  }
+
+  /* ══════════════════════════════
+     SCHERMATA RUOTA
+  ══════════════════════════════ */
+  #wheel-screen {
+    display: none; flex-direction: column;
+    align-items: center; gap: 13px;
+    animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  #wheel-wrap {
+    position: relative;
+    width: min(360px, 82vw);
+    height: min(360px, 82vw);
+  }
+
+  #pointer {
+    position: absolute; top: -14px; left: 50%;
+    transform: translateX(-50%); z-index: 10;
+    width: 0; height: 0;
+    border-left: 13px solid transparent;
+    border-right: 13px solid transparent;
+    border-top: 28px solid var(--gold);
+    filter: drop-shadow(0 2px 10px rgba(245,184,48,0.7));
+  }
+
+  #wheel-canvas {
+    width: 100%; height: 100%; border-radius: 50%;
+    box-shadow:
+      0 0 0 5px rgba(61,158,158,0.2),
+      0 0 0 10px rgba(61,158,158,0.07),
+      0 24px 80px rgba(0,0,0,0.6);
+  }
+
+  #wheel-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--navy2); border: 4px solid var(--teal);
+    z-index: 10; box-shadow: 0 0 18px rgba(61,158,158,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  #legend {
+    display: flex; flex-wrap: wrap;
+    justify-content: center; gap: 5px 14px;
+  }
+  .leg-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 500; color: var(--gray);
+  }
+  .leg-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+  #respin-bar {
+    display: none;
+    background: rgba(245,184,48,0.1);
+    border: 1px solid rgba(245,184,48,0.3);
+    border-radius: 100px; padding: 9px 22px;
+    font-size: 13px; font-weight: 500;
+    color: var(--gold); text-align: center;
+    animation: fadeIn 0.3s ease;
+  }
+
+  /* ══════════════════════════════
+     OVERLAY RISULTATO
+  ══════════════════════════════ */
+  #result-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(14,22,32,0.93);
+    backdrop-filter: blur(10px);
+    align-items: center; justify-content: center;
+    z-index: 100; padding: 24px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  #result-box {
+    background: linear-gradient(150deg, #253448 0%, #1B2A3B 100%);
+    border: 1px solid rgba(61,158,158,0.2);
+    border-radius: 28px; padding: 44px 36px 36px;
+    text-align: center; max-width: 400px; width: 100%;
+    box-shadow: 0 40px 90px rgba(0,0,0,0.6);
+    animation: popIn 0.45s cubic-bezier(0.16,1,0.3,1) both;
+    position: relative; overflow: hidden;
+  }
+  #result-box::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, #3D9E9E, #F5B830, #E8633A, #7B5EA7, #4CAF82);
+  }
+
+  #result-emoji { font-size: 52px; display: block; margin-bottom: 14px; line-height: 1; }
+  #result-label {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 100px; margin-bottom: 14px;
+  }
+  #result-title {
+    font-size: clamp(22px, 3.5vw, 30px); font-weight: 800;
+    letter-spacing: -0.04em; margin-bottom: 12px;
+    color: var(--white); line-height: 1.1;
+  }
+  #result-subtitle {
+    font-size: 15px; color: var(--gray);
+    line-height: 1.65; margin-bottom: 28px;
+  }
+  #result-btn {
+    background: var(--teal); color: var(--white);
+    border: none; padding: 15px 36px;
+    border-radius: 100px; width: 100%;
+    font-size: 15px; font-weight: 700;
+    font-family: inherit; cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  #result-btn:hover  { opacity: 0.85; }
+  #result-btn:active { transform: scale(0.97); }
+
+  /* ── ANIMAZIONI ── */
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(20px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  @keyframes fadeIn  { from { opacity:0; } to { opacity:1; } }
+  @keyframes popIn {
+    from { opacity:0; transform: scale(0.85) translateY(22px); }
+    to   { opacity:1; transform: scale(1) translateY(0); }
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 5px rgba(61,158,158,0.2), 0 0 0 10px rgba(61,158,158,0.07), 0 24px 80px rgba(0,0,0,0.6); }
+    50%      { box-shadow: 0 0 0 8px rgba(61,158,158,0.32), 0 0 0 16px rgba(61,158,158,0.12), 0 24px 80px rgba(0,0,0,0.6); }
+  }
+  .spinning #wheel-canvas { animation: pulse 1.1s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="logo-bar">
+    <div class="logo-text">metadonors</div>
+    <div class="logo-claim">innovating for social good</div>
+  </div>
+
+  <div id="event-title">
+    <h1><span>Gira</span><span class="donors">Donors</span></h1>
+    <p>La ruota della fortuna di Metadonors</p>
+  </div>
+
+  <!-- ══ FORM ══ -->
+  <div id="form-screen">
+    <div class="form-intro">
+      <h2>Inserisci i tuoi dati<br>e gira la ruota!</h2>
+      <p>Potresti vincere un premio speciale 🎁</p>
+    </div>
+
+    <div class="field-group">
+      <div class="field-row">
+        <div class="field-wrap">
+          <label>Nome <span class="req">*</span></label>
+          <input type="text" id="f-nome" placeholder="Mario" autocomplete="given-name">
+        </div>
+        <div class="field-wrap">
+          <label>Cognome <span class="req">*</span></label>
+          <input type="text" id="f-cognome" placeholder="Rossi" autocomplete="family-name">
+        </div>
+      </div>
+
+      <div class="field-wrap">
+        <label>Email <span class="req">*</span></label>
+        <input type="email" id="f-email" placeholder="mario.rossi@email.it" autocomplete="email">
+      </div>
+
+      <div class="field-row">
+        <div class="field-wrap">
+          <label>Cellulare</label>
+          <input type="tel" id="f-tel" placeholder="+39 333 0000000" autocomplete="tel">
+        </div>
+        <div class="field-wrap">
+          <label>Ente / Organizzazione</label>
+          <input type="text" id="f-ente" placeholder="Nome ente">
+        </div>
+      </div>
+    </div>
+
+    <div id="form-error"></div>
+    <button id="form-submit" onclick="submitForm()">Gira la ruota! 🎡</button>
+    <p class="privacy-note">I tuoi dati saranno trattati da Metadonors nel rispetto della normativa sulla privacy (GDPR). Non verranno ceduti a terzi.</p>
+  </div>
+
+  <!-- ══ COUNTDOWN ══ -->
+  <div id="countdown-screen">
+    <h2 id="cd-headline">Preparati a<br>girare la ruota!</h2>
+    <p class="sub">La ruota parte tra...</p>
+    <div id="cd-ring-wrap">
+      <svg width="116" height="116" viewBox="0 0 116 116">
+        <circle class="track" cx="58" cy="58" r="55"/>
+        <circle class="prog"  cx="58" cy="58" r="55" id="cd-circle"/>
+      </svg>
+      <div id="cd-num">5</div>
+    </div>
+  </div>
+
+  <!-- ══ RUOTA ══ -->
+  <div id="wheel-screen">
+    <div id="wheel-wrap">
+      <div id="pointer"></div>
+      <canvas id="wheel-canvas" width="400" height="400"></canvas>
+      <div id="wheel-center">🎯</div>
+    </div>
+    <div id="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#F5B830"></div>Spark (x4)</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#3D9E9E"></div>Impact (x2)</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#E8633A"></div>Double Spin (x2)</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#2D4057"></div>Next Time (x4)</div>
+    </div>
+    <div id="respin-bar"></div>
+  </div>
+
+</div>
+
+<!-- ══ OVERLAY RISULTATO ══ -->
+<div id="result-overlay">
+  <div id="result-box">
+    <span id="result-emoji"></span>
+    <div id="result-label"></div>
+    <div id="result-title"></div>
+    <div id="result-subtitle"></div>
+    <button id="result-btn" onclick="closeResult()">Ritira il tuo premio al nostro stand 🎁</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  CONFIG — inserisci qui l'URL del tuo Google Apps Script
+//  (vedi google-apps-script.js per come ottenerlo)
+// ════════════════════════════════════════════════════════
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwiEcZYBVaHQD4W8ymI8cDnaDd4tOHaosh5p67coTQAw8jPO_mRCCWx2S7H_ouSFeR0jg/exec";
+// Esempio: "https://script.google.com/macros/s/AKfycb.../exec"
+
+// ════════════════════════════════════════════════════════
+//  SEGMENTI RUOTA
+// ════════════════════════════════════════════════════════
+const SEGMENTS = [
+  { label: "Spark",         color: "#F5B830", text: "#1E2E40", type: "spark"  },
+  { label: "Next\nTime",    color: "#2D4057", text: "#8BAABF", type: "miss"   },
+  { label: "Spark",         color: "#F0A820", text: "#1E2E40", type: "spark"  },
+  { label: "Double\nSpin",  color: "#E8633A", text: "#fff",    type: "respin" },
+  { label: "Next\nTime",    color: "#263A50", text: "#7A9AB5", type: "miss"   },
+  { label: "Impact",        color: "#3D9E9E", text: "#fff",    type: "impact" },
+  { label: "Spark",         color: "#F5B830", text: "#1E2E40", type: "spark"  },
+  { label: "Next\nTime",    color: "#2D4057", text: "#8BAABF", type: "miss"   },
+  { label: "Impact",        color: "#2E8080", text: "#fff",    type: "impact" },
+  { label: "Double\nSpin",  color: "#D45530", text: "#fff",    type: "respin" },
+  { label: "Spark",         color: "#EDA010", text: "#1E2E40", type: "spark"  },
+  { label: "Next\nTime",    color: "#223347", text: "#7A9AB5", type: "miss"   },
+];
+
+const N   = SEGMENTS.length;
+const ARC = (2 * Math.PI) / N;
+let currentAngle = 0;
+let userData     = {};
+
+// ════════════════════════════════════════════════════════
+//  VALIDAZIONE E SUBMIT FORM
+// ════════════════════════════════════════════════════════
+function submitForm() {
+  const nome    = document.getElementById("f-nome").value.trim();
+  const cognome = document.getElementById("f-cognome").value.trim();
+  const email   = document.getElementById("f-email").value.trim();
+  const tel     = document.getElementById("f-tel").value.trim();
+  const ente    = document.getElementById("f-ente").value.trim();
+  const errEl   = document.getElementById("form-error");
+
+  // reset errori
+  ["f-nome","f-cognome","f-email"].forEach(id => {
+    document.getElementById(id).classList.remove("error");
+  });
+  errEl.style.display = "none";
+
+  // validazione
+  let hasError = false;
+  if (!nome)    { document.getElementById("f-nome").classList.add("error");    hasError = true; }
+  if (!cognome) { document.getElementById("f-cognome").classList.add("error"); hasError = true; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById("f-email").classList.add("error"); hasError = true;
+  }
+  if (hasError) {
+    errEl.textContent = "Compila i campi obbligatori (*)";
+    errEl.style.display = "block";
+    return;
+  }
+
+  userData = { nome, cognome, email, tel, ente };
+
+  // disabilita bottone per evitare doppio click
+  const btn = document.getElementById("form-submit");
+  btn.disabled = true;
+  btn.textContent = "Un attimo...";
+
+  // nasconde form, avvia countdown
+  document.getElementById("form-screen").style.display = "none";
+  startCountdown(nome);
+}
+
+// ════════════════════════════════════════════════════════
+//  INVIO DATI A GOOGLE SHEET (in background, silenzioso)
+// ════════════════════════════════════════════════════════
+function sendToSheet(risultato) {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === "INSERISCI_QUI_URL_APPS_SCRIPT") return;
+
+  const payload = {
+    timestamp:  new Date().toISOString(),
+    nome:       userData.nome,
+    cognome:    userData.cognome,
+    email:      userData.email,
+    telefono:   userData.tel   || "",
+    ente:       userData.ente  || "",
+    risultato:  risultato
+  };
+
+  fetch(APPS_SCRIPT_URL, {
+    method:  "POST",
+    mode:    "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body:    JSON.stringify(payload)
+  }).catch(() => {}); // silenzioso — non bloccare l'esperienza utente
+}
+
+// ════════════════════════════════════════════════════════
+//  RUOTA
+// ════════════════════════════════════════════════════════
+function drawWheel(angle) {
+  const canvas = document.getElementById("wheel-canvas");
+  const ctx    = canvas.getContext("2d");
+  const size   = canvas.width;
+  const cx = size/2, cy = size/2, r = size/2 - 4;
+  ctx.clearRect(0, 0, size, size);
+
+  for (let i = 0; i < N; i++) {
+    const s = angle + i * ARC, e = s + ARC;
+    const seg = SEGMENTS[i];
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, s, e);
+    ctx.closePath();
+    ctx.fillStyle = seg.color;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(14,22,32,0.5)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(s + ARC / 2);
+    ctx.textAlign   = "right";
+    ctx.font        = `700 13px 'Plus Jakarta Sans', sans-serif`;
+    ctx.fillStyle   = seg.text;
+    ctx.shadowColor = "rgba(0,0,0,0.3)";
+    ctx.shadowBlur  = 3;
+    const lines = seg.label.split("\n");
+    lines.forEach((line, j) => {
+      ctx.fillText(line, r - 16, (j - (lines.length - 1) / 2) * 17 + 4);
+    });
+    ctx.restore();
+  }
+}
+
+function easeOut(t) { return 1 - Math.pow(1 - t, 4); }
+
+function spinTo(segIndex, onEnd) {
+  const wrap = document.getElementById("wheel-wrap");
+  wrap.classList.add("spinning");
+
+  // La freccia è in cima (ore 12) = -PI/2 nel sistema canvas.
+  // Calcoliamo la rotazione esatta per portare il centro del segmento sotto la freccia.
+  const segMid     = segIndex * ARC + ARC / 2;
+  const target     = ((-Math.PI / 2 - segMid) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+  const base       = (currentAngle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+  const diff       = (target - base + 2 * Math.PI) % (2 * Math.PI);
+  const extraSpins = Math.PI * 2 * (6 + Math.floor(Math.random() * 4));
+  const totalRot   = diff + extraSpins;
+
+  const startAngle = currentAngle;
+  const t0 = performance.now();
+
+  (function frame(now) {
+    const t = Math.min((now - t0) / 4400, 1);
+    currentAngle = startAngle + totalRot * easeOut(t);
+    drawWheel(currentAngle);
+    if (t < 1) {
+      requestAnimationFrame(frame);
+    } else {
+      currentAngle = startAngle + totalRot;
+      drawWheel(currentAngle);
+      wrap.classList.remove("spinning");
+      setTimeout(() => onEnd(SEGMENTS[segIndex]), 500);
+    }
+  })(t0);
+}
+
+function pickSegment() { return Math.floor(Math.random() * N); }
+
+function showResult(segment) {
+  if (segment.type === "respin") { showRespinCountdown(); return; }
+
+  const emoji = document.getElementById("result-emoji");
+  const label = document.getElementById("result-label");
+  const title = document.getElementById("result-title");
+  const sub   = document.getElementById("result-subtitle");
+  const nome  = escapeHTML(userData.nome || "");
+
+  if (segment.type === "spark") {
+    emoji.textContent = "✨";
+    label.textContent = "Spark";
+    label.style.cssText = "background:rgba(245,184,48,0.15);border:1px solid rgba(245,184,48,0.35);color:#F5B830";
+    title.textContent = "Hai vinto uno Spark!";
+    title.style.color = "#F5B830";
+    sub.innerHTML = `Ogni grande impatto inizia da una scintilla, <strong>${nome}</strong>.<br>Vieni allo stand per ritirare il tuo premio!`;
+  } else if (segment.type === "impact") {
+    emoji.textContent = "🏆";
+    label.textContent = "Impact";
+    label.style.cssText = "background:rgba(61,158,158,0.15);border:1px solid rgba(61,158,158,0.35);color:#3D9E9E";
+    title.textContent = "Hai vinto un Impact!";
+    title.style.color = "#3D9E9E";
+    sub.innerHTML = `Eccezionale, <strong>${nome}</strong>!<br>Il tuo impatto è reale. Ti aspettiamo allo stand con qualcosa di speciale.`;
+  } else {
+    emoji.textContent = "🌱";
+    label.textContent = "Next Time";
+    label.style.cssText = "background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4)";
+    title.textContent = "Questa volta no.";
+    title.style.color = "rgba(255,255,255,0.8)";
+    sub.innerHTML = `Ma ci sei, <strong>${nome}</strong> — e questo già conta.<br>Passa comunque allo stand, vogliamo conoscerti!`;
+  }
+
+  // Invia dati al Google Sheet
+  sendToSheet(segment.label.replace("\n", " "));
+
+  document.getElementById("result-overlay").style.display = "flex";
+}
+
+function closeResult() {
+  document.getElementById("result-overlay").style.display = "none";
+}
+
+function showRespinCountdown() {
+  // Invia comunque i dati con risultato "Double Spin (rigira)"
+  sendToSheet("Double Spin");
+
+  const bar = document.getElementById("respin-bar");
+  bar.style.display = "block";
+  let c = 5;
+  bar.textContent = `🔄 Double Spin! La ruota riparte tra ${c}...`;
+  const iv = setInterval(() => {
+    c--;
+    if (c > 0) { bar.textContent = `🔄 Double Spin! La ruota riparte tra ${c}...`; }
+    else { clearInterval(iv); bar.style.display = "none"; doSpin(); }
+  }, 1000);
+}
+
+function doSpin() { spinTo(pickSegment(), showResult); }
+
+// ════════════════════════════════════════════════════════
+//  COUNTDOWN
+// ════════════════════════════════════════════════════════
+function startCountdown(nome) {
+  const cs = document.getElementById("countdown-screen");
+  cs.style.display = "flex";
+  document.getElementById("cd-headline").innerHTML =
+    `<span class="name-highlight">${escapeHTML(nome)}</span>,<br>è il tuo momento!`;
+
+  const circle = document.getElementById("cd-circle");
+  const numEl  = document.getElementById("cd-num");
+  let c = 5;
+  circle.style.strokeDashoffset = "0";
+
+  const iv = setInterval(() => {
+    c--;
+    numEl.textContent = c;
+    circle.style.strokeDashoffset = String(345.4 * (1 - c / 5));
+    if (c <= 0) {
+      clearInterval(iv);
+      cs.style.display = "none";
+      const ws = document.getElementById("wheel-screen");
+      ws.style.display = "flex";
+      drawWheel(currentAngle);
+      setTimeout(doSpin, 200);
+    }
+  }, 1000);
+}
+
+// ════════════════════════════════════════════════════════
+//  UTILITY
+// ════════════════════════════════════════════════════════
+function escapeHTML(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+window.addEventListener("load", () => { drawWheel(0); });
+</script>
+</body>
+</html>
