@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GiraDonors – Metadonors</title>
+<title>GiraDoni – Metadonors</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -126,7 +126,7 @@
   </div>
 
   <div id="event-title">
-    <h1><span>Gira</span><span class="donors">Donors</span></h1>
+    <h1><span>Gira</span><span class="donors">Doni</span></h1>
     <p>La ruota della fortuna di Metadonors</p>
   </div>
 
@@ -134,7 +134,7 @@
   <div id="form-screen">
     <div class="form-intro">
       <h2>Inserisci il tuo nome<br>e gira la ruota!</h2>
-      <p>Potresti vincere un premio speciale 🎁</p>
+      <p>Potresti vincere dei gadget speciali!</p>
     </div>
     <div class="field-group">
       <div class="field-row">
@@ -151,21 +151,19 @@
         <label>Email <span class="req">*</span></label>
         <input type="email" id="f-email" placeholder="mario.rossi@email.it" autocomplete="email">
       </div>
-      <div class="field-row">
-        <div class="field-wrap">
-          <label>Cellulare</label>
-          <input type="tel" id="f-tel" placeholder="+39 333 0000000" autocomplete="tel">
-        </div>
-        <div class="field-wrap">
-          <label>Ente / Organizzazione</label>
+      <div class="field-wrap">
+        <label>Ente / Organizzazione <span class="req">*</span></label>
           <input type="text" id="f-ente" placeholder="Nome ente">
         </div>
-      </div>
     </div>
     <div id="form-error"></div>
-    <button id="form-submit" onclick="submitForm()">Gira la ruota! 🎡</button>
-    <p class="privacy-note">I tuoi dati saranno trattati da Metadonors nel rispetto del GDPR. Non verranno ceduti a terzi.</p>
-  </div>
+    <button id="form-submit" onclick="submitForm()">Gira la ruota!</button>
+    <div id="privacy-wrap" style="display:flex;align-items:center;gap:10px;width:100%;">
+      <input type="checkbox" id="privacy-check" style="width:18px;height:18px;flex-shrink:0;accent-color:#3D9E9E;cursor:pointer;">
+      <label for="privacy-check" style="font-size:13px;color:rgba(255,255,255,0.5);cursor:pointer;">
+        Ho letto e accetto la <a href="https://metadonors.it/privacy-policy/" target="_blank" style="color:#3D9E9E;">Privacy Policy</a> <span style="color:#F5B830;">*</span>
+      </label>
+    </div>
 
   <!-- COUNTDOWN -->
   <div id="countdown-screen">
@@ -187,12 +185,7 @@
       <canvas id="wheel-canvas" width="400" height="400"></canvas>
       <div id="wheel-center">🎯</div>
     </div>
-    <div id="legend">
-      <div class="leg-item"><div class="leg-dot" style="background:#F5B830"></div>1° Premio (x4)</div>
-      <div class="leg-item"><div class="leg-dot" style="background:#3D9E9E"></div>2° Premio (x2)</div>
-      <div class="leg-item"><div class="leg-dot" style="background:#E8633A"></div>Gira ancora! (x2)</div>
-      <div class="leg-item"><div class="leg-dot" style="background:#2D4057"></div>Non hai vinto (x4)</div>
-    </div>
+
     <div id="respin-bar"></div>
   </div>
 
@@ -213,18 +206,18 @@
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwiEcZYBVaHQD4W8ymI8cDnaDd4tOHaosh5p67coTQAw8jPO_mRCCWx2S7H_ouSFeR0jg/exec";
 
 const SEGMENTS = [
-  { label: "1°\nPremio",     color: "#F5B830", text: "#1E2E40", type: "spark"  },
-  { label: "Non hai\nvinto",  color: "#2D4057", text: "#8BAABF", type: "miss"   },
-  { label: "1°\nPremio",     color: "#F0A820", text: "#1E2E40", type: "spark"  },
-  { label: "Gira\nancora!",   color: "#E8633A", text: "#fff",    type: "respin" },
-  { label: "Non hai\nvinto",  color: "#263A50", text: "#7A9AB5", type: "miss"   },
-  { label: "2°\nPremio",     color: "#3D9E9E", text: "#fff",    type: "impact" },
-  { label: "1°\nPremio",     color: "#F5B830", text: "#1E2E40", type: "spark"  },
-  { label: "Non hai\nvinto",  color: "#2D4057", text: "#8BAABF", type: "miss"   },
-  { label: "2°\nPremio",     color: "#2E8080", text: "#fff",    type: "impact" },
-  { label: "Gira\nancora!",   color: "#D45530", text: "#fff",    type: "respin" },
-  { label: "1°\nPremio",     color: "#EDA010", text: "#1E2E40", type: "spark"  },
-  { label: "Non hai\nvinto",  color: "#223347", text: "#7A9AB5", type: "miss"   },
+  { label: "🕶️",  color: "#F5B830", text: "#1E2E40", type: "spark",  emoji: true },
+  { label: "😞",  color: "#2D4057", text: "#8BAABF", type: "miss",   emoji: true },
+  { label: "🕶️",  color: "#F0A820", text: "#1E2E40", type: "spark",  emoji: true },
+  { label: "🔄",  color: "#E8633A", text: "#fff",    type: "respin", emoji: true },
+  { label: "😞",  color: "#263A50", text: "#7A9AB5", type: "miss",   emoji: true },
+  { label: "🧠",  color: "#3D9E9E", text: "#fff",    type: "impact", emoji: true },
+  { label: "🕶️",  color: "#F5B830", text: "#1E2E40", type: "spark",  emoji: true },
+  { label: "😞",  color: "#2D4057", text: "#8BAABF", type: "miss",   emoji: true },
+  { label: "🧠",  color: "#2E8080", text: "#fff",    type: "impact", emoji: true },
+  { label: "🔄",  color: "#D45530", text: "#fff",    type: "respin", emoji: true },
+  { label: "🕶️",  color: "#EDA010", text: "#1E2E40", type: "spark",  emoji: true },
+  { label: "😞",  color: "#223347", text: "#7A9AB5", type: "miss",   emoji: true },
 ];
 
 const N = SEGMENTS.length;
@@ -236,17 +229,23 @@ function submitForm() {
   const nome    = document.getElementById("f-nome").value.trim();
   const cognome = document.getElementById("f-cognome").value.trim();
   const email   = document.getElementById("f-email").value.trim();
-  const tel     = document.getElementById("f-tel").value.trim();
   const ente    = document.getElementById("f-ente").value.trim();
+  const privacy = document.getElementById("privacy-check").checked;
   const errEl   = document.getElementById("form-error");
-  ["f-nome","f-cognome","f-email"].forEach(id => document.getElementById(id).classList.remove("error"));
+  ["f-nome","f-cognome","f-email","f-ente"].forEach(id => document.getElementById(id).classList.remove("error"));
   errEl.style.display = "none";
   let hasError = false;
   if (!nome)    { document.getElementById("f-nome").classList.add("error");    hasError = true; }
   if (!cognome) { document.getElementById("f-cognome").classList.add("error"); hasError = true; }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById("f-email").classList.add("error"); hasError = true; }
-  if (hasError) { errEl.textContent = "Compila i campi obbligatori (*)"; errEl.style.display = "block"; return; }
-  userData = { nome, cognome, email, tel, ente };
+  if (!ente)    { document.getElementById("f-ente").classList.add("error");    hasError = true; }
+  if (!privacy) { hasError = true; }
+  if (hasError) {
+    errEl.textContent = !privacy ? "Accetta la Privacy Policy per continuare" : "Compila i campi obbligatori (*)";
+    errEl.style.display = "block";
+    return;
+  }
+  userData = { nome, cognome, email, ente };
   const btn = document.getElementById("form-submit");
   btn.disabled = true;
   btn.textContent = "Un attimo...";
@@ -259,7 +258,7 @@ function sendToSheet(risultato) {
   fetch(APPS_SCRIPT_URL, {
     method: "POST", mode: "no-cors",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ timestamp: new Date().toISOString(), nome: userData.nome, cognome: userData.cognome, email: userData.email, telefono: userData.tel || "", ente: userData.ente || "", risultato })
+    body: JSON.stringify({ timestamp: new Date().toISOString(), nome: userData.nome, cognome: userData.cognome, email: userData.email, ente: userData.ente || "", risultato })
   }).catch(() => {});
 }
 
@@ -278,8 +277,13 @@ function drawWheel(angle) {
     ctx.save(); ctx.translate(cx, cy); ctx.rotate(s + ARC / 2);
     ctx.textAlign = "right"; ctx.font = "700 12px 'Plus Jakarta Sans', sans-serif";
     ctx.fillStyle = seg.text; ctx.shadowColor = "rgba(0,0,0,0.3)"; ctx.shadowBlur = 3;
-    const lines = seg.label.split("\n");
-    lines.forEach((line, j) => { ctx.fillText(line, r - 14, (j - (lines.length-1)/2) * 16 + 4); });
+    if (seg.emoji) {
+      ctx.font = "28px serif";
+      ctx.fillText(seg.label, r - 28, 10);
+    } else {
+      const lines = seg.label.split("\n");
+      lines.forEach((line, j) => { ctx.fillText(line, r - 14, (j - (lines.length-1)/2) * 16 + 4); });
+    }
     ctx.restore();
   }
 }
