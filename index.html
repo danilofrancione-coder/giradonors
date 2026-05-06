@@ -246,14 +246,14 @@ function showResult(sg){
     E("result-subtitle").textContent="Ci dispiace, sarà per un’altra volta!";
     btn.style.display="none";
   }
-  send(sg.type);
+  send(sg.type==="spark"?"1° Premio":sg.type==="impact"?"2° Premio":sg.type==="miss"?"Non ha vinto":"Gira ancora");
   E("result-overlay").style.display="flex";
 }
 
 function closeResult(){document.getElementById("result-overlay").style.display="none";}
 
 function doRespin(){
-  send("respin");
+  send("Gira ancora");
   const bar=document.getElementById("respin-bar");bar.style.display="block";
   let c=3;bar.textContent="🔄 Gira ancora! Riparte tra "+c+"...";
   const iv=setInterval(()=>{c--;if(c>0){bar.textContent="🔄 Gira ancora! Riparte tra "+c+"...";}else{clearInterval(iv);bar.style.display="none";doSpin();}},1000);
